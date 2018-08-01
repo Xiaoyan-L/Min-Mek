@@ -1,33 +1,37 @@
 import React, { Component } from 'react';
 import { Form, FormGroup, Label, Input, Col, Button } from 'reactstrap';
-import { getUnit } from '../../apis';
+import { getUnitById, getUnit } from '../../apis';
 
-class UnionForm extends Component {
+class UnitForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      _id: '',
       name: '',
-      affliation: '',
+      affiliation: '',
       message: ''
     }
   }
 
   componentDidMount() {
-    getUnit()
-    .then(res => {
-      const { data } = res;
-      if (data) {
-        this.setAllStates(data);
-        this.props.setUnit(data._id);
-      }
-    });
-    
+    try {
+      const { setMsg, setUnit } = this.props;
+      getUnit()
+      .then(({data}) => {
+        if (data) {
+          this.setAllStates(data);
+          setUnit(data._id, data.name);
+        }
+      })
+      .catch(({response}) => {
+        setMsg(response.status + " " + response.StatusText);
+      });
+    } catch (err) {
+      this.props.setMsg(err);
+    }
   }
 
   setAllStates = unit => {
     this.setState({
-      _id: unit._id,
       name: unit.name,
       affiliation: unit.affiliation
     });
@@ -41,44 +45,41 @@ class UnionForm extends Component {
 
   onNameChange = e => {
     this.setState({
-      name: e.target.value
+      name: e.target.value.trim()
     });
   }
 
   onAffiliChange = e => {
     this.setState({
-      affiliation: e.target.value
+      affiliation: e.target.value.trim()
     });
   }
 
   onSubmit =  e => {
     e.preventDefault();
-    const { _id, name, affiliation } = this.state;
-    const { handleSubmit } = this.props;
-    if ( name.trim() === ' ') {
+    const { name, affiliation } = this.state;
+    const { id, handleSubmit } = this.props;
+    console.log(id);
+    if ( name === ' ') {
       this.setMsg('Name is empty');
-    } else if (affiliation.trim() === '') {
+    } else if (affiliation === '') {
       this.setMsg('Affiliation is empty');
-    } else if (_id !== '') {
-      handleSubmit({
-        _id,
-        name, 
-        affiliation
-      });
+    } else if (id !== '') {
+      handleSubmit(id, {name, affiliation});
     } else {
-      handleSubmit({name, affiliation});
+      handleSubmit(null, {name, affiliation});
     }
   }
 
   render() {
-    const { _id, name, affiliation } = this.state;
+    const { name, affiliation, message } = this.state;
     return (
       <Form className="mt-5" onSubmit={this.onSubmit}>
         <FormGroup row>
           <Label for="name" className="text-right" sm={{size: 1, offset: 4}}>
             Name
           </Label>
-          <Col sm={2}>
+          <Col sm={4}>
             <Input type="text" id="name" value={name} onChange={this.onNameChange} />
           </Col>
         </FormGroup>
@@ -86,13 +87,13 @@ class UnionForm extends Component {
           <Label for="affiliation"  className="text-right" sm={{size: 1, offset: 4}}>
             Affiliation
           </Label>
-          <Col sm={2}>
+          <Col sm={4}>
             <Input type="text" id="affiliation" value={affiliation} onChange={this.onAffiliChange} />
           </Col>
         </FormGroup>
         <FormGroup >
           <Label color="text-danger">
-            {this.props.error}
+            {message}
           </Label> 
         </FormGroup>
         <FormGroup row>
@@ -108,4 +109,4 @@ class UnionForm extends Component {
 
 }
 
-export default UnionForm;
+export default UnitForm;

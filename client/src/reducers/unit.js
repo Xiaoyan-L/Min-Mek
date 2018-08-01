@@ -2,6 +2,7 @@ import { Types } from "../actions/unit";
 
 const initState = {
   id: '',
+  name: '',
   isloading: false,
   error: ''
 };
@@ -18,7 +19,8 @@ const unit = (state = initState, action) => {
       return {
         ...state,
         isloading: false,
-        id: action.id
+        id: action.id,
+        name: action.name
       };
     case Types.FAILURE:
       return {
