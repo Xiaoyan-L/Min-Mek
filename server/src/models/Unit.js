@@ -21,10 +21,12 @@ const UnitSchema = new Schema({
     default: "",
     trim: true
   },
-  mechs: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Pilot'
-  }]
+  mechs: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Mech"
+    }
+  ]
 });
 
-module.exports = mongoose.model('Unit', UnitSchema);
+module.exports = mongoose.model("Unit", UnitSchema);

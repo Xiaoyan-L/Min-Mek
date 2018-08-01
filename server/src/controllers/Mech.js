@@ -1,16 +1,17 @@
 const Mech = require("../models/Mech");
 
 const index = (req, res) => {
-  Mech.find({}, '_id name model weight class', (err, data) => {
-    try {
+  try {
+    Mech.find({}, '_id name model weight class', (err, data) => {
+    
       if (err) {
         throw err;
       }
       res.status(200).json(data);
-    } catch (err) {
+    });
+  } catch (err) {
       res.json({err});
-    }
-  });
+  }
 }
 
 const add = (req, res) => {
@@ -71,4 +72,18 @@ const deleteById = (req, res) => {
   }
 }
 
-module.exports = { index, add, update, getMechById, deleteById };
+const getDropDown = (req, res) => {
+  try {
+    Mech.find().distinct('_id model', (err, data) => {
+    
+      if (err) {
+        throw err;
+      }
+      res.status(200).json(data);
+    });
+  } catch (err) {
+      res.json({err});
+  }
+}
+
+module.exports = { index, add, update, getMechById, deleteById, getDropDown };

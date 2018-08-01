@@ -24,7 +24,11 @@ const MechSchema = new Schema({
   unit: {
     type: Schema.Types.ObjectId,
     ref: 'Unit'
-  }
+  },
+  pilots: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Pilot'
+  }]
 });
 
 module.exports = mongoose.model('Mech', MechSchema);

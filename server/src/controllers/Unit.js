@@ -44,6 +44,7 @@ const update = (req, res) => {
 const findUnitByID = (req, res) => {
   try {
     const { id } = req.params;
+    console.log(id);
     Unit.findById(id, (err, Unit) => {
       if (err) {
         throw err;
@@ -55,4 +56,24 @@ const findUnitByID = (req, res) => {
   }
 }
 
-module.exports = { index, add, update };
+const getAllOrg = (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(id);
+    Unit.findById(id, "name")
+    .populate({
+      path: 'mechs',
+      model: 'Mech'
+    }) 
+    .exec((err, data) => {
+      if (err) {
+        throw err;
+      }
+      res.status(200).json(data);
+    });
+  } catch (err) {
+    res.status(500).json({err});
+  }
+}
+
+module.exports = { index, add, update, findUnitByID, getAllOrg };
